@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrow Cart</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Borrow Cart</h1>
+    <div id="borrowCartList">
+        <!-- Borrow cart items will be inserted here via JavaScript -->
+    </div>
+    <button onclick="window.location.href='borrower.html'">Return to Browse</button>
+    <!-- <button onclick="window.location.href='checkout.html'">Proceed to Checkout</button> -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchBorrowCartItems();
+        });
+        
+        function fetchBorrowCartItems() {
+            fetch('http://localhost:8080/cart/borrow')
+                .then(response => response.json())
+                .then(items => {
+                    const cartContainer = document.getElementById('borrowCartItems'); 
+                    cartContainer.innerHTML = '';  // Clear previous items
+                    items.forEach(item => {
+                        const itemElement = document.createElement('div');
+                        itemElement.classList.add('item');
+                        itemElement.innerHTML = `
+                            <p>Material ID: ${item.materialId}</p>
+                            <p>Quantity: ${item.quantity}</p>
+                        `;
+                        cartContainer.appendChild(itemElement);
+                    });
+                })
+                .catch(error => console.error('Failed to fetch items:', error));
+        }
+    </script>
+</body>
+</html>

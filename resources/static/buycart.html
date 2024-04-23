@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Cart</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Buy Cart</h1>
+    <div id="buyCartList">
+        <!-- Buy cart items will be inserted here via JavaScript -->
+    </div>
+    <button onclick="window.location.href='borrower.html'">Return to Browse</button>
+    <button onclick="window.location.href='checkout.html'">Proceed to Payment</button>
+
+    <script>
+        fetch('http://localhost:8080/cart')
+        .then(response => response.json())
+        .then(items => {
+            const cartList = document.getElementById('buyCartList');
+            items.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.innerHTML = `
+                    <p>${item.title} - ${item.quantity} x $${item.price}</p>
+                `;
+                cartList.appendChild(itemElement);
+            });
+        })
+        .catch(error => console.error('Failed to fetch buy cart items:', error));
+    </script>
+</body>
+</html>

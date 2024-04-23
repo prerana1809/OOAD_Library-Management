@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Materials</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #materialList {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .material {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .material h2 {
+            margin-top: 0;
+        }
+        .material p {
+            margin-bottom: 5px;
+        }
+        .material button {
+            margin-right: 5px;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #ccc;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Library Materials</h1>
+    <div id="materialList">
+        <!-- Material list will be displayed here -->
+    </div>
+
+    <script>
+        fetch('http://localhost:8080/materials')
+        .then(response => response.json())
+        .then(materials => {
+            const materialList = document.getElementById('materialList');
+            materials.forEach(material => {
+                const materialElement = document.createElement('div');
+                materialElement.classList.add('material');
+                materialElement.innerHTML = `
+                    <h2>${material.name}</h2>
+                    <p><strong>Author:</strong> ${material.author}</p>
+                    <p><strong>Publishing Year:</strong> ${material.publishingYear}</p>
+                    <p><strong>Price:</strong> $${material.price}</p>
+                    <p><strong>Quantity:</strong> ${material.qty}</p>
+                    <button onclick="addToBorrowCart('${material.id}')">Add to Borrow Cart</button>
+                    <button onclick="addToBuyCart('${material.id}')">Add to Buy Cart</button>
+                    <hr>
+                `;
+                materialList.appendChild(materialElement);
+            });
+        })
+        .catch(error => console.error('Error fetching materials:', error));
+    
+        function addToBorrowCart(materialId) {
+            fetch('http://localhost:8080/cart/borrow', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ "materialId" : materialId , "quantity": 1 })
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = 'bocart.html'; // Redirect to the borrow cart page
+                } else {
+                    console.error('Failed to add item to borrow cart');
+                    alert('Failed to add item to borrow cart');
+                }
+            })
+            .catch(error => console.error('Error adding item to borrow cart:', error));
+        }
+    
+        function addToBuyCart(materialId) {
+            fetch('http://localhost:8080/cart/buy', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: materialId })
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = 'buycart.html'; // Redirect to the buy cart page
+                } else {
+                    console.error('Failed to add item to buy cart');
+                    alert('Failed to add item to buy cart');
+                }
+            })
+            .catch(error => console.error('Error adding item to buy cart:', error));
+        }
+    </script>
+    
+</body>
+</html>

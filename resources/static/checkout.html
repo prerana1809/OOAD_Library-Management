@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Checkout</h1>
+    <div id="checkoutList">
+        <!-- Checkout items will be inserted here -->
+    </div>
+    <button onclick="window.location.href='buycart.html'">Return to Cart</button>
+    <button onclick="processPayment()">Proceed to Payment</button>
+
+    <script>
+        // Fetch the cart items to display on checkout
+        fetch('http://localhost:8080/cart/buy')
+        .then(response => response.json())
+        .then(items => {
+            const checkoutList = document.getElementById('checkoutList');
+            let total = 0;
+            items.forEach(item => {
+                total += item.quantity * item.price;
+                const itemElement = document.createElement('div');
+                itemElement.innerHTML = `
+                    <p>${item.title} - ${item.quantity} x $${item.price} = $${item.quantity * item.price}</p>
+                `;
+                checkoutList.appendChild(itemElement);
+            });
+            // Add a total cost element
+            const totalElement = document.createElement('p');
+            totalElement.innerHTML = `<strong>Total: $${total}</strong>`;
+            checkoutList.appendChild(totalElement);
+        })
+        .catch(error => console.error('Failed to fetch buy cart items:', error));
+
+        function processPayment() {
+            // Dummy function to simulate payment processing
+            console.log('Processing payment...');
+            alert('Payment processed successfully! Do you wish to go to browse more materials?');
+            // Redirect to a success page or similar
+            window.location.href = 'borrower.html';
+        }
+    </script>
+</body>
+</html>
